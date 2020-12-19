@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class RecyclerViewActivity extends AppCompatActivity {
+public class RecyclerViewActivity extends AppCompatActivity { //trip list
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,23 +28,23 @@ public class RecyclerViewActivity extends AppCompatActivity {
         tripList_rv.setLayoutManager(linearLayoutManager);
 
         //extract trip list from local database
-        List<Trip> dataSource;
+        List<Trip> dataSource = Trip.getList();
      //   tripList_rv.setAdapter(new ItemAdapter(dataSource));
 
     }
 
-    private static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView name;
         private final TextView destination;
 
-        ItemViewHolder(@NonNull View itemView) {
+        public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.trip_name);
             destination = itemView.findViewById(R.id.trip_destination);
         }
 
-        void bind(@NonNull final Trip item) {
+        public void bind(@NonNull final Trip item) {
             name.setText(item.getName());
             destination.setText(item.getDestination());
         }
