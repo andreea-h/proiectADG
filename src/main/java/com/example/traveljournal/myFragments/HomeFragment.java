@@ -1,25 +1,38 @@
 package com.example.traveljournal.myFragments;
 
+import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import com.example.traveljournal.AddNewTripActivity;
 import com.example.traveljournal.R;
 import com.example.traveljournal.RecyclerViewActivity;
 import com.example.traveljournal.Trip;
+import com.example.traveljournal.TripDAO;
+import com.example.traveljournal.TripDatabase;
+import com.example.traveljournal.TripViewModel;
 
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
+
 public class HomeFragment extends Fragment {
 
+    private TripViewModel tripViewModel;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -38,10 +51,34 @@ public class HomeFragment extends Fragment {
         tripList_rv.setLayoutManager(linearLayoutManager);
 
         //extract trip list from local database
-        List<Trip> dataSource = Trip.getList();
-        tripList_rv.setAdapter(new ItemAdapter(dataSource));
+        LiveData<List<Trip>> dataSource = tripViewModel.getAllTrips();
+        ItemAdapter itemAdapter = new ItemAdapter(dataSource.getValue());
+        tripList_rv.setAdapter(itemAdapter);
+
+        tripViewModel = new ViewModelProvider(this).get(TripViewModel.class);
+        tripViewModel.getAllTrips().observe(getViewLifecycleOwner(), trips -> itemAdapter.submitList(trips));
+
+        TripDatabase db = Room.databaseBuilder(getActivity().getApplicationContext(),
+               TripDatabase.class, "trip-database").build();
+
+
         return view;
     }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Trip trip = new Trip(data.getStringExtra(AddNewTripActivity.EXTRA_REPLY));
+            tripViewModel.insert(trip);
+        } else {
+            Toast.makeText(
+                    getActivity().getApplicationContext(),
+                    R.string.empty_not_saved,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -49,8 +86,6 @@ public class HomeFragment extends Fragment {
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle("Menu 1");
     }
-
-
 
     private static class ItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -95,6 +130,7 @@ public class HomeFragment extends Fragment {
         public int getItemCount() {
             return items.size();
         }
+
     }
 
 }

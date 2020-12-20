@@ -1,15 +1,27 @@
 package com.example.traveljournal;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity(tableName = "trips_table") //Trip class represents a SQLite table
 public class Trip {
+    @PrimaryKey
     private String name;
+    @ColumnInfo(name = "destination")
     private String destination;
+    @ColumnInfo(name = "type")
     private String type; //3 possible values
+    @ColumnInfo(name = "price")
     private float price;
+    @ColumnInfo(name = "startData")
     private TripDate startDate;
+    @ColumnInfo(name = "endDate")
     private TripDate endDate;
+    @ColumnInfo(name = "rating")
     private float rating;
 
     public Trip(String name, String destination, String type, float price, TripDate startDate, TripDate endDate, float rating) {
@@ -43,6 +55,10 @@ public class Trip {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
     public void setPrice(float price) {
