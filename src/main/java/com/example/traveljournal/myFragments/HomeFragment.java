@@ -1,7 +1,9 @@
 package com.example.traveljournal.myFragments;
 
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,13 +28,16 @@ import com.example.traveljournal.TripDAO;
 import com.example.traveljournal.TripDatabase;
 import com.example.traveljournal.TripViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 
 import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment {
 
-    private TripViewModel tripViewModel;
+   // private TripViewModel tripViewModel;
+    public static List<Trip> trips = new ArrayList<>();
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -43,7 +48,6 @@ public class HomeFragment extends Fragment {
         //returning our layout file
         //change R.layout.yourlayoutfilename for each of your fragments
         View view = inflater.inflate(R.layout.activity_recycler_view, container, false);
-
         RecyclerView tripList_rv = view.findViewById(R.id.rv_trip_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -51,21 +55,29 @@ public class HomeFragment extends Fragment {
         tripList_rv.setLayoutManager(linearLayoutManager);
 
         //extract trip list from local database
-        LiveData<List<Trip>> dataSource = tripViewModel.getAllTrips();
-        ItemAdapter itemAdapter = new ItemAdapter(dataSource.getValue());
+        Context context = getActivity();
+
+        AsyncTask.execute(() -> {
+            TripDatabase dataBase = TripDatabase.getDatabase(context.getApplicationContext());
+            trips = new ArrayList<Trip>(dataBase.tripDAO().getAll());
+            System.out.println(trips.get(trips.size() - 1).getName());
+        });
+
+        ItemAdapter itemAdapter = new ItemAdapter(trips);
         tripList_rv.setAdapter(itemAdapter);
 
-        tripViewModel = new ViewModelProvider(this).get(TripViewModel.class);
+      /*  LiveData<List<Trip>> dataSource = tripViewModel.getAllTrips();*/
+
+
+       /* tripViewModel = new ViewModelProvider(this).get(TripViewModel.class);
         tripViewModel.getAllTrips().observe(getViewLifecycleOwner(), trips -> itemAdapter.submitList(trips));
 
         TripDatabase db = Room.databaseBuilder(getActivity().getApplicationContext(),
-               TripDatabase.class, "trip-database").build();
-
-
+               TripDatabase.class, "trip-database").build();*/
         return view;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+   /* public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
@@ -77,7 +89,7 @@ public class HomeFragment extends Fragment {
                     R.string.empty_not_saved,
                     Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
 
     @Override
@@ -130,7 +142,5 @@ public class HomeFragment extends Fragment {
         public int getItemCount() {
             return items.size();
         }
-
     }
-
 }

@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import android.os.Handler;
 
+import java.util.Objects;
+
 import static androidx.core.os.HandlerCompat.postDelayed;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,15 +20,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
-        new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                Intent mainIntent = new Intent(MainActivity.this, MainScreenActivity.class);
-                MainActivity.this.startActivity(mainIntent);
-                MainActivity.this.finish();
-            }
+        new Handler().postDelayed(() -> {
+            Intent mainIntent = new Intent(MainActivity.this, MainScreenActivity.class);
+            MainActivity.this.startActivity(mainIntent);
+            MainActivity.this.finish();
         }, SPLASH_DISPLAY_TIME);
     }
 

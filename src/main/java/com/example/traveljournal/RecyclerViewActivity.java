@@ -29,8 +29,7 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
 
         //extract trip list from local database
         List<Trip> dataSource = Trip.getList();
-     //   tripList_rv.setAdapter(new ItemAdapter(dataSource));
-
+        tripList_rv.setAdapter(new ItemAdapter(dataSource));
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {

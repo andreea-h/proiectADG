@@ -5,11 +5,14 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Trip.class}, version = 1)
+@TypeConverters({Converters.class})
 public abstract class TripDatabase extends RoomDatabase {
     public abstract TripDAO tripDAO();
 
@@ -19,15 +22,18 @@ public abstract class TripDatabase extends RoomDatabase {
     static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUM_THREADS);
 
-    static TripDatabase getDatabase(final Context context) {
+    public static TripDatabase getDatabase(final Context context) {
         if (instance == null) {
             synchronized (TripDatabase.class) {
                 if (instance == null) {
                     instance = Room.databaseBuilder(context.getApplicationContext(),
-                            TripDatabase.class, "word_database")
-                            .build();
+                            TripDatabase.class, "trips_table").build();
+                    System.out.println("Este creata o noua instanta");
                 }
             }
+        }
+        else {
+            System.out.println("Exista deja instanta bazei de date");
         }
         return instance;
     }

@@ -11,8 +11,8 @@ import java.util.List;
 
 @Dao
 public interface TripDAO {
-    @Query("SELECT * from trips_table ORDER BY name ASC")
-    LiveData<List<Trip>> getAll();
+    @Query("SELECT * from trips_table")
+    List<Trip> getAll();
 
     @Query("SELECT * FROM trips_table WHERE name IN (:userIds)")
     List<Trip> loadAllByIds(int[] userIds);

@@ -9,7 +9,7 @@ import java.util.List;
 public class TripRepository {
 
     private TripDAO tripDao;
-    private LiveData<List<Trip>> tripsData;
+    private List<Trip> tripsData;
 
     TripRepository(Application application) {
         TripDatabase db = TripDatabase.getDatabase(application);
@@ -17,7 +17,7 @@ public class TripRepository {
         tripsData = tripDao.getAll();
     }
 
-    LiveData<List<Trip>> getAllTrips() {
+    List<Trip> getAllTrips() {
         return tripsData;
     }
 

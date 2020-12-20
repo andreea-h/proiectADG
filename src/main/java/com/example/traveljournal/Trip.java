@@ -1,14 +1,18 @@
 package com.example.traveljournal;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "trips_table") //Trip class represents a SQLite table
 public class Trip {
+    @NonNull
     @PrimaryKey
     private String name;
     @ColumnInfo(name = "destination")
@@ -24,7 +28,11 @@ public class Trip {
     @ColumnInfo(name = "rating")
     private float rating;
 
-    public Trip(String name, String destination, String type, float price, TripDate startDate, TripDate endDate, float rating) {
+    public Trip() {
+        this("", "", "", 0, new TripDate(0,0,0), new TripDate(0,0,0), 0);
+    }
+
+    public Trip(@NotNull String name, String destination, String type, float price, TripDate startDate, TripDate endDate, float rating) {
         this.name = name;
         this.destination = destination;
         this.type = type;
@@ -63,6 +71,14 @@ public class Trip {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public void setStartDate(TripDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(TripDate endDate) {
+        this.endDate = endDate;
     }
 
     public void setStartDate(int day, int month, int year) {
