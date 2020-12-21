@@ -2,7 +2,6 @@ package com.example.traveljournal;
 
 import android.app.Application;
 
-import androidx.lifecycle.LiveData;
 
 import java.util.List;
 

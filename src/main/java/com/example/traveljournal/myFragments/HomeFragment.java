@@ -1,8 +1,10 @@
 package com.example.traveljournal.myFragments;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -53,6 +56,8 @@ public class HomeFragment extends Fragment {
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
         tripList_rv.setLayoutManager(linearLayoutManager);
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), linearLayoutManager.getOrientation());
+        tripList_rv.addItemDecoration(divider);
 
         //extract trip list from local database
         Context context = getActivity();
@@ -63,7 +68,7 @@ public class HomeFragment extends Fragment {
             System.out.println(trips.get(trips.size() - 1).getName());
         });
 
-        ItemAdapter itemAdapter = new ItemAdapter(trips);
+        RecyclerViewActivity.ItemAdapter itemAdapter = new RecyclerViewActivity.ItemAdapter(trips);
         tripList_rv.setAdapter(itemAdapter);
 
       /*  LiveData<List<Trip>> dataSource = tripViewModel.getAllTrips();*/
@@ -91,56 +96,4 @@ public class HomeFragment extends Fragment {
         }
     }*/
 
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        //you can set the title for your toolbar here for different fragments different titles
-        getActivity().setTitle("Menu 1");
-    }
-
-    private static class ItemViewHolder extends RecyclerView.ViewHolder {
-
-        private final TextView name;
-        private final TextView destination;
-
-        ItemViewHolder(@NonNull View itemView) {
-            super(itemView);
-            name = itemView.findViewById(R.id.trip_name);
-            destination = itemView.findViewById(R.id.trip_destination);
-        }
-
-        void bind(@NonNull final Trip item) {
-            name.setText(item.getName());
-            destination.setText(item.getDestination());
-        }
-    }
-
-    private static class ItemAdapter extends RecyclerView.Adapter<RecyclerViewActivity.ItemViewHolder> {
-
-        @NonNull
-        private final List<Trip> items;
-
-        ItemAdapter(@NonNull List<Trip> items) {
-            this.items = items;
-        }
-
-        @NonNull
-        @Override
-        public RecyclerViewActivity.ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.fragment_home, parent, false);
-            return new RecyclerViewActivity.ItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerViewActivity.ItemViewHolder holder, int position) {
-            holder.bind(items.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return items.size();
-        }
-    }
 }

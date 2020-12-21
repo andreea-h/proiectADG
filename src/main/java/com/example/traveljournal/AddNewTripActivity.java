@@ -99,14 +99,7 @@ public class AddNewTripActivity extends AppCompatActivity {
             //add new trip info in local database
             dataBase.tripDAO().insert(newTripItem);
             List<Trip> db = dataBase.tripDAO().getAll();
-            System.out.println(db.get(db.size() - 1).getName());
        });
-
-        AsyncTask.execute(() -> {
-            TripDatabase dataBase = TripDatabase.getDatabase(context.getApplicationContext());
-            List <Trip> trips = new ArrayList<Trip>(dataBase.tripDAO().getAll());
-            System.out.println(trips.get(trips.size() - 1).getName());
-        });
     }
 
     private String getNameFromEditText() {

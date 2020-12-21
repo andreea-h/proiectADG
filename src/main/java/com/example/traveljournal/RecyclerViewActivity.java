@@ -1,10 +1,12 @@
 package com.example.traveljournal;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,54 +22,50 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler_view);
-
-        RecyclerView tripList_rv = findViewById(R.id.rv_trip_list);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
-
-        tripList_rv.setLayoutManager(linearLayoutManager);
-
-        //extract trip list from local database
-        List<Trip> dataSource = Trip.getList();
-        tripList_rv.setAdapter(new ItemAdapter(dataSource));
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
-
+    private static class ItemViewHolder extends RecyclerView.ViewHolder {
         private final TextView name;
         private final TextView destination;
+        private final TextView price;
+        private final TextView rating;
 
-        public ItemViewHolder(@NonNull View itemView) {
+        ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.trip_name);
             destination = itemView.findViewById(R.id.trip_destination);
+            price = itemView.findViewById(R.id.trip_price);
+            rating = itemView.findViewById(R.id.trip_rating);
         }
 
-        public void bind(@NonNull final Trip item) {
+        @SuppressLint("SetTextI18n")
+        void bind(@NonNull final Trip item) {
             name.setText(item.getName());
-            destination.setText(item.getDestination());
+            destination.setText("Destination -> " + item.getDestination());
+            price.setText("Price -> " + String.valueOf(item.getPrice()) +"euro");
+            rating.setText("Rating -> " + String.valueOf(item.getRating()) + "/5");
         }
     }
 
-    private static class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
+    public static class ItemAdapter extends RecyclerView.Adapter<RecyclerViewActivity.ItemViewHolder> {
 
         @NonNull
         private final List<Trip> items;
 
-        ItemAdapter(@NonNull List<Trip> items) {
+        public ItemAdapter(@NonNull List<Trip> items) {
             this.items = items;
         }
 
         @NonNull
         @Override
-        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public RecyclerViewActivity.ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View view = inflater.inflate(R.layout.fragment_home, parent, false);
-            return new ItemViewHolder(view);
+            return new RecyclerViewActivity.ItemViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull RecyclerViewActivity.ItemViewHolder holder, int position) {
             holder.bind(items.get(position));
         }
 

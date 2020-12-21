@@ -13,7 +13,7 @@ import static androidx.core.os.HandlerCompat.postDelayed;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_TIME = 2000;
+    private final int SPLASH_DISPLAY_TIME = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
