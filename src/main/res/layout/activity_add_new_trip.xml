@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:background="#CEE6B1"
     tools:context=".AddNewTripActivity">
 
     <LinearLayout
@@ -20,6 +21,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:layout_marginStart="40dp"
+            android:textStyle="bold"
             android:text="@string/name"/>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -44,6 +46,7 @@
             android:layout_height="wrap_content"
             android:text="@string/destination"
             android:textSize="20sp"
+            android:textStyle="bold"
             android:layout_marginStart="40dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -67,7 +70,8 @@
             android:layout_height="wrap_content"
             android:text="@string/trip_type"
             android:layout_marginStart="40dp"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <RadioGroup
             android:id="@+id/trip_type"
@@ -75,26 +79,27 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp">
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/city_break"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/city_break"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
             <RadioButton
                 android:id="@+id/sea_side"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sea_side"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
             <RadioButton
                 android:id="@+id/mountains"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/mountains"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </RadioGroup>
 
         <TextView
@@ -102,24 +107,30 @@
             android:layout_height="wrap_content"
             android:text="@string/price"
             android:layout_marginStart="40dp"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
-        <com.google.android.material.slider.Slider
+        <SeekBar
             android:id="@+id/price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:valueFrom="0.0"
-            android:valueTo="10000"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"/>
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/price_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_marginStart="40dp"
+            android:text="@string/price_start"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/start_date"
             android:textSize="20sp"
-            android:layout_marginStart="20dp"/>
+            android:layout_marginStart="20dp"
+            android:textStyle="bold"/>
 
         <DatePicker
             android:id="@+id/start_date"
@@ -135,7 +146,8 @@
             android:layout_height="wrap_content"
             android:text="@string/end_date"
             android:layout_marginStart="20dp"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <DatePicker
             android:id="@+id/end_date"
@@ -146,12 +158,43 @@
             android:layout_marginStart="80dp">
         </DatePicker>
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:text="Gallery photo"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:hint="@string/select_image"
+            android:onClick="btnSelectPhotoOnClick"
+            android:id="@+id/gallery_photo"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_width="180dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="2"
+            android:text="SELECT"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@color/pink"
+            android:textColor="#e3ffffff"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/rating"
             android:textSize="20sp"
-            android:layout_marginStart="20dp"/>
+            android:layout_marginStart="20dp"
+            android:textStyle="bold"/>
 
         <RatingBar
             android:id="@+id/rating"
@@ -165,12 +208,22 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"/>
 
+        <TextView
+            android:id="@+id/image_path_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"/>
+
         <Button
             android:id="@+id/submit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="140dp"
-            android:text="SAVE TRIP" />
+            android:layout_gravity="center_horizontal"
+            android:text="SAVE TRIP"
+            android:onClick="btnSaveOnClick"/>
 
         <View
             android:layout_width="wrap_content"

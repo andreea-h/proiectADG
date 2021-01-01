@@ -3,9 +3,14 @@ package com.example.traveljournal;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -13,15 +18,25 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.EventListener;
 import java.util.List;
 
-public class AddNewTripActivity extends AppCompatActivity {
+public class AddNewTripActivity extends AppCompatActivity implements EventListener {
 
+    public static final int SELECTPHOTO_REQUEST_CODE = 100;
     public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
 
     private TextInputLayout tripNameTextInputLayout;
@@ -29,8 +44,12 @@ public class AddNewTripActivity extends AppCompatActivity {
 
     private DatePicker startDatePicker;
     private DatePicker endDatePicker;
-    private Slider priceSlider;
+    private SeekBar priceSlider;
+    private TextView priceTextView;
     private RatingBar ratingBar;
+
+    private String photoPath;
+    private TextView imagePathTextView;
 
     private RadioGroup tripTypeOptions;
     private RadioButton tripType;
@@ -45,16 +64,78 @@ public class AddNewTripActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_new_trip);
 
         initInputs();
-
+/*
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //get new trip info from input fields
                 //and add new trip object info into the local database
-                getInputsAndUpdateDB();
+
             }
-        });
+        });*/
     }
+
+    public void btnSaveOnClick(View view) {
+        getInputsAndUpdateDB();
+    }
+
+
+    //get photo trip
+    public void btnSelectPhotoOnClick(View view) {
+        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getIntent.setType("image/*");
+
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+
+        Intent chooserIntent = Intent.createChooser(getIntent, "Select photo");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+
+        startActivityForResult(chooserIntent, SELECTPHOTO_REQUEST_CODE);
+    }
+/*
+    public void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_PHOTO);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_PHOTO && resultCode == AddNewTripActivity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            try {
+                InputStream inputStream = AddNewTripActivity.this.getContentResolver().openInputStream(data.getData());
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
+        }
+    }*/
+
+    //Get image / taken photo
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SELECTPHOTO_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                photoPath = cursor.getString(columnIndex);
+                cursor.close();
+
+                imagePathTextView.setText(photoPath);
+            }
+        }
+    }
+
 
     private void getInputsAndUpdateDB() {
         //generate new Trip Object
@@ -70,10 +151,19 @@ public class AddNewTripActivity extends AppCompatActivity {
         newTripItem.setType(tripType.getText().toString());
 
         //get and set price value for new Trip object
-        priceSlider.addOnChangeListener(new Slider.OnChangeListener() {
+        priceSlider.setMax(10000);
+        priceSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                newTripItem.setPrice(value);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                priceTextView.setText("Price: " + priceSlider.getProgress() * 10 + " EUR");
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
             }
         });
 
@@ -91,6 +181,7 @@ public class AddNewTripActivity extends AppCompatActivity {
         //get trip rating
         float ratingVal = ratingBar.getRating();
         newTripItem.setRating(ratingVal);
+
 
         Context context = getApplicationContext();
         //access localDatabase
@@ -122,22 +213,52 @@ public class AddNewTripActivity extends AppCompatActivity {
 
         priceSlider = findViewById(R.id.price);
         ratingBar = findViewById(R.id.rating);
+        priceTextView = findViewById(R.id.price_textView);
 
         tripTypeOptions = findViewById(R.id.trip_type);
         submitButton = findViewById(R.id.submit_button);
+        imagePathTextView = findViewById(R.id.image_path_textView);
     }
 
     //return false if not all fields are completed
-    private boolean validation() {
-        boolean valid = true;
-        if (tripNameEditText.getText().toString().isEmpty()) {
-            tripNameTextInputLayout.setError(getString(R.string.name_cannot_be_empty));
-            valid = false;
+    private boolean validation() throws ParseException {
+        if(tripNameEditText.getText().toString() == null || tripNameEditText.getText().toString().isEmpty()) {
+            Toast.makeText(AddNewTripActivity.this, "Enter trip name", Toast.LENGTH_SHORT).show();
+            return false;
         }
-        if (tripDestinationEditText.getText().toString().isEmpty()) {
-            tripDestinationEditText.setError(getString(R.string.destination_cannot_be_empty));
-            valid = false;
+        if( tripDestinationEditText.getText().toString() == null ||  tripDestinationEditText.getText().toString().isEmpty()) {
+            Toast.makeText(AddNewTripActivity.this, "Enter destination", Toast.LENGTH_SHORT).show();
+            return false;
         }
-        return valid;
+        if(tripTypeOptions.getCheckedRadioButtonId() == -1) {
+            Toast.makeText(AddNewTripActivity.this, "Select trip type", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(priceSlider.getProgress() == 0) {
+            Toast.makeText(AddNewTripActivity.this, "Select trip price", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(startDatePicker == null) {
+            Toast.makeText(AddNewTripActivity.this, "Enter start date", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(endDatePicker == null) {
+            Toast.makeText(AddNewTripActivity.this, "Enter end date", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        SimpleDateFormat format = new SimpleDateFormat("d/M/y");
+        Date sDate = format.parse(startDatePicker.getDayOfMonth() + "/" + startDatePicker.getMonth() + "/" + startDatePicker.getYear());
+        Date eDate = format.parse(endDatePicker.getDayOfMonth() + "/" + endDatePicker.getMonth() + "/" + endDatePicker.getYear());
+        if (eDate.compareTo(sDate) < 0) {
+            Toast.makeText(AddNewTripActivity.this, "End date occurs before start date!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(photoPath == null) {
+            Toast.makeText(AddNewTripActivity.this, "Select photo", Toast.LENGTH_SHORT).show();
+            return false;
+
+        }
+
+        return true;
     }
 }

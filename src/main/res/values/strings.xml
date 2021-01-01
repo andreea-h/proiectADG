@@ -23,6 +23,11 @@
     <string name="city_break">City Break</string>
     <string name="sea_side">Sea Side</string>
     <string name="mountains">Mountains</string>
+    <string name="favourites">Favourites</string>
+    <string name="price_start">--EUR</string>
+    <string name="select_image">SELECT IMAGE</string>
+
+
 
     <string name="name_cannot_be_empty">You must complete trip name</string>
     <string name="destination_cannot_be_empty">You must complete trip destination</string>

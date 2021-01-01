@@ -28,12 +28,8 @@ public abstract class TripDatabase extends RoomDatabase {
                 if (instance == null) {
                     instance = Room.databaseBuilder(context.getApplicationContext(),
                             TripDatabase.class, "trips_table").build();
-                    System.out.println("Este creata o noua instanta");
                 }
             }
-        }
-        else {
-            System.out.println("Exista deja instanta bazei de date");
         }
         return instance;
     }

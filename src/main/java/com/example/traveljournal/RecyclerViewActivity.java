@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
         private final TextView name;
         private final TextView destination;
         private final TextView price;
+        public ImageView tripImage;
+        public ImageView bookmark;
         private final TextView rating;
 
         ItemViewHolder(@NonNull View itemView) {
@@ -35,6 +38,8 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
             name = itemView.findViewById(R.id.trip_name);
             destination = itemView.findViewById(R.id.trip_destination);
             price = itemView.findViewById(R.id.trip_price);
+            tripImage = itemView.findViewById(R.id.image);
+            bookmark = itemView.findViewById(R.id.bookmark);
             rating = itemView.findViewById(R.id.trip_rating);
         }
 

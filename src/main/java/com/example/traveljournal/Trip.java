@@ -27,12 +27,16 @@ public class Trip {
     private TripDate endDate;
     @ColumnInfo(name = "rating")
     private float rating;
+    private String imagePath;
+    private boolean isFavourite;
+
+
 
     public Trip() {
-        this("", "", "", 0, new TripDate(0,0,0), new TripDate(0,0,0), 0);
+        this("", "", "", 0, new TripDate(0,0,0), new TripDate(0,0,0), 0, "", false);
     }
 
-    public Trip(@NotNull String name, String destination, String type, float price, TripDate startDate, TripDate endDate, float rating) {
+    public Trip(@NotNull String name, String destination, String type, float price, TripDate startDate, TripDate endDate, float rating, String imagePath, boolean isFavourite) {
         this.name = name;
         this.destination = destination;
         this.type = type;
@@ -40,17 +44,16 @@ public class Trip {
         this.startDate = startDate;
         this.endDate = endDate;
         this.rating = rating;
+        this.isFavourite = isFavourite;
+        this.imagePath = imagePath;
     }
 
-    public static List<Trip> getList() {
-        int i;
-        List<Trip> list = new ArrayList<Trip>(10);
-        for (i = 0; i < 10; i++) {
-            Trip t = new Trip("Trip " + i, "dest " + i, "tip", i,
-                        new TripDate(0, 0, 0), new TripDate(0, 0, 0), 0);
-            list.add(t);
-        }
-        return list;
+    public void setFavourite(boolean favourite) {
+        isFavourite = favourite;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public void setName(String name) {
@@ -116,4 +119,13 @@ public class Trip {
     public TripDate getEndDate() {
         return endDate;
     }
+
+    public boolean getFavourite() {
+        return isFavourite;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
 }
