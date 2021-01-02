@@ -67,7 +67,7 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
 
         initInputs();
 
-        priceSlider.setMax(3000);
+        priceSlider.setMax(1000);
         priceSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -85,19 +85,30 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
 
             }
         });
-/*
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //get new trip info from input fields
-                //and add new trip object info into the local database
-
-            }
-        });*/
     }
 
-    public void btnSaveOnClick(View view) {
-        getInputsAndUpdateDB();
+    public void btnSaveOnClick(View view) throws ParseException {
+        getInputs();
+
+        if (!validation()) {
+            return;
+        }
+        //updateDB
+        Context context = getApplicationContext();
+        //access localDatabase
+        AsyncTask.execute(() -> {
+            TripDatabase dataBase = TripDatabase.getDatabase(context);
+            //add new trip info in local database
+            dataBase.tripDAO().insert(newTripItem);
+            List<Trip> db = dataBase.tripDAO().getAll();
+        });
+
+        Toast.makeText(this, "Trip successfully added", Toast.LENGTH_SHORT).show();
+
+        //back to main screen
+        Intent mainIntent = new Intent(AddNewTripActivity.this, MainScreenActivity.class);
+        AddNewTripActivity.this.startActivity(mainIntent);
+        AddNewTripActivity.this.finish();
     }
 
 
@@ -114,30 +125,8 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
 
         startActivityForResult(chooserIntent, SELECTPHOTO_REQUEST_CODE);
     }
-/*
-    public void pickImage() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, PICK_PHOTO);
-    }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_PHOTO && resultCode == AddNewTripActivity.RESULT_OK) {
-            if (data == null) {
-                //Display an error
-                return;
-            }
-            try {
-                InputStream inputStream = AddNewTripActivity.this.getContentResolver().openInputStream(data.getData());
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
-        }
-    }*/
-
-    //Get image / taken photo
+    //get image
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -158,10 +147,7 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
     }
 
 
-    private void getInputsAndUpdateDB() {
-        //generate new Trip Object
-
-
+    private void getInputs() {
         //set trip name and destination
         newTripItem.setName(getNameFromEditText());
         newTripItem.setDestination(getDestinationFromEditText());
@@ -170,9 +156,6 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
         int selectedId = tripTypeOptions.getCheckedRadioButtonId();
         tripType = findViewById(selectedId);
         newTripItem.setType(tripType.getText().toString());
-
-        //get and set price value for new Trip object
-
 
         //get start, end date from DatePickers
         int start_day = startDatePicker.getDayOfMonth();
@@ -189,15 +172,6 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
         float ratingVal = ratingBar.getRating();
         newTripItem.setRating(ratingVal);
         newTripItem.setImagePath(imagePathTextView.getText().toString());
-
-        Context context = getApplicationContext();
-        //access localDatabase
-        AsyncTask.execute(() -> {
-            TripDatabase dataBase = TripDatabase.getDatabase(context);
-            //add new trip info in local database
-            dataBase.tripDAO().insert(newTripItem);
-            List<Trip> db = dataBase.tripDAO().getAll();
-       });
     }
 
     private String getNameFromEditText() {

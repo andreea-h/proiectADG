@@ -48,7 +48,6 @@ import static android.app.Activity.RESULT_OK;
 public class HomeFragment extends Fragment {
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static final int PERMISSION_REQUEST_CODE = 200;
 
     private static final String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,

@@ -40,6 +40,7 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
 
         FloatingActionButton fab = findViewById(R.id.fab);
 
+        //add trip action
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,14 +54,12 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        //REFERNCE NAV VIEW AND ATTACH ITS ITEM SELECTION LISTENER
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_screen, menu);
         return true;
     }
@@ -76,25 +75,21 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        //OPEN APPROPRIATE FRAGMENT WHEN NAV ITEM IS SELECTED
         if (id == R.id.nav_home) {
-            //PERFORM TRANSACTION TO REPLACE CONTAINER WITH FRAGMENT
             MainScreenActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, HomeFragment.newInstance()).commit();
+
         }
 
-        //REFERENCE AND CLOSE DRAWER LAYOUT
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    //CLOSE DRAWER WHEN BACK BTN IS CLICKED,IF OPEN
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {

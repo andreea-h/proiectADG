@@ -21,4 +21,7 @@
     <style name="Theme.TravelJournal.AppBarOverlay"
         parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.TravelJournal.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="seekBarColor">
+        <item name="color">@color/dark_green</item>
+    </style>
 </resources>
