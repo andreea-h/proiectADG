@@ -3,25 +3,37 @@ package com.example.traveljournal;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.util.List;
 
 public class RecyclerViewActivity extends AppCompatActivity { //trip list
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_recycler_view);
     }
 
@@ -29,9 +41,9 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
         private final TextView name;
         private final TextView destination;
         private final TextView price;
-        public ImageView tripImage;
-        public ImageView bookmark;
         private final TextView rating;
+        private final ImageView tripImage;
+        private final ImageView bookmark;
 
         ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -46,9 +58,15 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
         @SuppressLint("SetTextI18n")
         void bind(@NonNull final Trip item) {
             name.setText(item.getName());
-            destination.setText("Destination -> " + item.getDestination());
-            price.setText("Price -> " + String.valueOf(item.getPrice()) +"euro");
-            rating.setText("Rating -> " + String.valueOf(item.getRating()) + "/5");
+            destination.setText(" " + item.getDestination());
+            price.setText(" " + item.getPrice() +"euro");
+            rating.setText(item.getRating() + "/5.0");
+            File imageFile = new File(item.getImagePath());
+            if(imageFile.exists()) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+                tripImage.setImageBitmap(myBitmap);
+                tripImage.setClipToOutline(true);
+            }
         }
     }
 

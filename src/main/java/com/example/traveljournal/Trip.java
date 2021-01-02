@@ -27,7 +27,9 @@ public class Trip {
     private TripDate endDate;
     @ColumnInfo(name = "rating")
     private float rating;
+    @ColumnInfo(name = "imagePath")
     private String imagePath;
+    @ColumnInfo(name = "isFavourite")
     private boolean isFavourite;
 
 

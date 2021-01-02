@@ -3,6 +3,7 @@ package com.example.traveljournal;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,9 +36,10 @@ import java.util.EventListener;
 import java.util.List;
 
 public class AddNewTripActivity extends AppCompatActivity implements EventListener {
-
     public static final int SELECTPHOTO_REQUEST_CODE = 100;
     public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
+
+    final Trip newTripItem = new Trip();
 
     private TextInputLayout tripNameTextInputLayout;
     private TextInputLayout tripDestinationTextInputLayout;
@@ -64,6 +66,25 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
         setContentView(R.layout.activity_add_new_trip);
 
         initInputs();
+
+        priceSlider.setMax(3000);
+        priceSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                System.out.println("Valorea este: " + priceSlider.getProgress());
+                priceTextView.setText("Price: " + priceSlider.getProgress() * 10 + " EUR");
+                newTripItem.setPrice(priceSlider.getProgress() * 10);
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 /*
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +160,7 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
 
     private void getInputsAndUpdateDB() {
         //generate new Trip Object
-        final Trip newTripItem = new Trip();
+
 
         //set trip name and destination
         newTripItem.setName(getNameFromEditText());
@@ -151,21 +172,7 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
         newTripItem.setType(tripType.getText().toString());
 
         //get and set price value for new Trip object
-        priceSlider.setMax(10000);
-        priceSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                priceTextView.setText("Price: " + priceSlider.getProgress() * 10 + " EUR");
-            }
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
 
         //get start, end date from DatePickers
         int start_day = startDatePicker.getDayOfMonth();
@@ -181,7 +188,7 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
         //get trip rating
         float ratingVal = ratingBar.getRating();
         newTripItem.setRating(ratingVal);
-
+        newTripItem.setImagePath(imagePathTextView.getText().toString());
 
         Context context = getApplicationContext();
         //access localDatabase
