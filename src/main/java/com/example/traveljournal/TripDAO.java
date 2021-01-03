@@ -15,7 +15,7 @@ public interface TripDAO {
     LiveData<List<Trip>> getAll();
 
     @Query("SELECT * FROM trips_table WHERE name IN (:userIds)")
-   List<Trip> loadAllByIds(int[] userIds);
+    List<Trip> loadAllByIds(int[] userIds);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE) //daca se inceraca adaugarea unui trip cu acelasi nume, acesta va fi ignorat
     void insert(Trip trip);
@@ -25,4 +25,7 @@ public interface TripDAO {
 
     @Query("DELETE FROM trips_table")
     void deleteAll();
+
+    @Query("SELECT * FROM trips_table WHERE isFavourite IN (1)")
+    LiveData<List<Trip>> getFavouritesTrips();
 }

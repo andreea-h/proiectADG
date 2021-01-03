@@ -12,15 +12,21 @@ public class TripRepository {
 
     private TripDAO tripDao;
     private LiveData<List<Trip>> tripsData;
+    private LiveData<List<Trip>> favouritesTrips;
 
     TripRepository(Application application) {
         TripDatabase db = TripDatabase.getDatabase(application);
         tripDao = db.tripDAO();
         tripsData = tripDao.getAll();
+        favouritesTrips = tripDao.getFavouritesTrips();
     }
 
     LiveData<List<Trip>> getAllTrips() {
         return tripsData;
+    }
+
+    LiveData<List<Trip>> getFavouritesTrips() {
+        return favouritesTrips;
     }
 
     void insert(Trip trip) {

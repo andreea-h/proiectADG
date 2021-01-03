@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
+import com.example.traveljournal.myFragments.FavouritesFragment;
 import com.example.traveljournal.myFragments.HomeFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -57,7 +58,6 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
                 MainScreenActivity.this.startActivity(mainIntent);
             }
         });
-
     }
 
     @Override
@@ -65,7 +65,6 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
         getMenuInflater().inflate(R.menu.main_screen, menu);
         return true;
     }
-
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -87,7 +86,16 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
                 getSupportActionBar().setTitle(title);
             }
         }
-
+        else if (id == R.id.nav_favourites) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.nav_host_fragment, new FavouritesFragment());
+            transaction.commitNow();
+            String title = "Favourite Trip List";
+            //set toolbar title
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(title);
+            }
+        }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

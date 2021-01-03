@@ -26,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.traveljournal.myFragments.HomeFragment;
+
 import java.io.File;
 import java.util.List;
 
@@ -67,6 +69,36 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
                 tripImage.setImageBitmap(myBitmap);
                 tripImage.setClipToOutline(true);
             }
+            bookmark.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new RecyclerViewActivity().bookmarkPressed(item, bookmark);
+                }
+            });
+        }
+    }
+
+    public void bookmarkPressed(Trip trip, ImageView iconView) {
+        if (trip.getFavourite() == true) {
+            //update info in database
+            iconView.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+           /* AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    tjdb.tripDao().deleteTrip(trip.toObject(Trip.class));
+                }
+            });*/
+            Toast.makeText(this, "Trip removed for favourites", Toast.LENGTH_SHORT).show();
+        } else {
+            //update info in database
+            iconView.setImageResource(R.drawable.ic_baseline_bookmark_24);
+           /* AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    tjdb.tripDao().addTrip(trip.toObject(Trip.class));
+                }
+            });*/
+            Toast.makeText(this, "Trip marked as favourite", Toast.LENGTH_SHORT).show();
         }
     }
 

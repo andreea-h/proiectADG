@@ -12,14 +12,21 @@ public class TripViewModel extends AndroidViewModel {
 
     private final LiveData<List<Trip>> allTrips;
 
+    private final LiveData<List<Trip>> favouritesTrips;
+
     public TripViewModel(Application application) {
         super(application);
         tripRepository = new TripRepository(application);
         allTrips = tripRepository.getAllTrips();
+        favouritesTrips = tripRepository.getFavouritesTrips();
     }
 
     public LiveData<List<Trip>> getAllTrips() {
         return allTrips;
+    }
+
+    public LiveData<List<Trip>> getFavouritesTrips() {
+        return favouritesTrips;
     }
 
     public void insert(Trip trip) {

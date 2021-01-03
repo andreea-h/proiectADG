@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -33,7 +32,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class HomeFragment extends Fragment {
+public class FavouritesFragment extends Fragment {
 
     public static final int NEW_TRIP_ACTIVITY_REQUEST_CODE = 1;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -44,11 +43,10 @@ public class HomeFragment extends Fragment {
     };
 
     public static List<Trip> trips = new ArrayList<>();
-    private static final HomeFragment instance = new HomeFragment();
     private TripViewModel tripViewModel;
 
-    public static HomeFragment getInstance() {
-        return new HomeFragment();
+    public static FavouritesFragment getInstance() {
+        return new FavouritesFragment();
     }
     @Nullable
     @Override
@@ -67,7 +65,7 @@ public class HomeFragment extends Fragment {
 
         tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
         // Update the cached copy of the words in the adapter.
-        tripViewModel.getAllTrips().observe(getViewLifecycleOwner(), itemAdapter::setTrips);
+        tripViewModel.getFavouritesTrips().observe(getViewLifecycleOwner(), itemAdapter::setTrips);
         return view;
     }
 
@@ -81,5 +79,4 @@ public class HomeFragment extends Fragment {
             );
         }
     }
-
 }
