@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <!-- select only one item -->
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_baseline_book_24"
+            android:title="@string/menu_home"
+            android:checked="true" />
+        <item
+            android:id="@+id/nav_favourites"
+            android:icon="@drawable/ic_baseline_bookmarks_24"
+            android:title="@string/favourites" />
+        <item
+            android:id="@+id/nav_about_us"
+            android:icon="@drawable/ic_baseline_info_24"
+            android:title="@string/menu_aboutUs" />
+
+        <item android:title="Information">
+            <menu>
+                <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_contact"
+            android:icon="@drawable/ic_baseline_connect_without_contact_24"
+            android:title="@string/menu_contact" />
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_baseline_share_24"
+            android:title="@string/menu_share" />
+                </group>
+            </menu>
+        </item>
+
+    </group>
+</menu>
