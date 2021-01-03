@@ -1,2 +1,2 @@
-# proiectADG
-Proiect TravelJournal - Curs Android
+
+#Proiect TravelJournal - Curs Android
