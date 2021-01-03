@@ -96,11 +96,11 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
         //updateDB
         Context context = getApplicationContext();
         //access localDatabase
-        AsyncTask.execute(() -> {
+        TripRepository.insertAsyncTask.execute(() -> {
             TripDatabase dataBase = TripDatabase.getDatabase(context);
             //add new trip info in local database
             dataBase.tripDAO().insert(newTripItem);
-            List<Trip> db = dataBase.tripDAO().getAll();
+            List<Trip> db = dataBase.tripDAO().getAll().getValue();
         });
 
         Toast.makeText(this, "Trip successfully added", Toast.LENGTH_SHORT).show();

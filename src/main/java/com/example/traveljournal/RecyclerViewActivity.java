@@ -73,7 +73,7 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
     public static class ItemAdapter extends RecyclerView.Adapter<RecyclerViewActivity.ItemViewHolder> {
 
         @NonNull
-        private final List<Trip> items;
+        private List<Trip> items;
 
         public ItemAdapter(@NonNull List<Trip> items) {
             this.items = items;
@@ -96,5 +96,11 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
         public int getItemCount() {
             return items.size();
         }
+
+        public void setTrips(List<Trip> items) {
+            this.items = items;
+            notifyDataSetChanged();
+        }
+
     }
 }

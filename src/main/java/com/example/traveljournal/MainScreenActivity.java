@@ -38,8 +38,17 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        FloatingActionButton fab = findViewById(R.id.fab);
         //add trip action
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,14 +57,7 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
                 MainScreenActivity.this.startActivity(mainIntent);
             }
         });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -72,14 +74,18 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
                 || super.onSupportNavigateUp();
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.nav_home) {
-            MainScreenActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, HomeFragment.newInstance()).commit();
-
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.nav_host_fragment, new HomeFragment());
+            transaction.commitNow();
+            String title = "Trip List";
+            //set toolbar title
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(title);
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

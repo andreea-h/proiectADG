@@ -10,7 +10,7 @@ import java.util.List;
 public class TripViewModel extends AndroidViewModel {
     private TripRepository tripRepository;
 
-    private final List<Trip> allTrips;
+    private final LiveData<List<Trip>> allTrips;
 
     public TripViewModel(Application application) {
         super(application);
@@ -18,7 +18,7 @@ public class TripViewModel extends AndroidViewModel {
         allTrips = tripRepository.getAllTrips();
     }
 
-    public List<Trip> getAllTrips() {
+    public LiveData<List<Trip>> getAllTrips() {
         return allTrips;
     }
 

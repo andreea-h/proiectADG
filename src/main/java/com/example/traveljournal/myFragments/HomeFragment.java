@@ -1,52 +1,40 @@
 package com.example.traveljournal.myFragments;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import com.example.traveljournal.AddNewTripActivity;
 import com.example.traveljournal.R;
 import com.example.traveljournal.RecyclerViewActivity;
 import com.example.traveljournal.Trip;
-import com.example.traveljournal.TripDAO;
 import com.example.traveljournal.TripDatabase;
 import com.example.traveljournal.TripViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CyclicBarrier;
 
 import static android.app.Activity.RESULT_OK;
 
 public class HomeFragment extends Fragment {
 
+    public static final int NEW_TRIP_ACTIVITY_REQUEST_CODE = 1;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
 
     private static final String[] PERMISSIONS_STORAGE = {
@@ -54,35 +42,31 @@ public class HomeFragment extends Fragment {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-
     public static List<Trip> trips = new ArrayList<>();
-    private RecyclerViewActivity instance = new RecyclerViewActivity();
+    private static final HomeFragment instance = new HomeFragment();
+    private TripViewModel tripViewModel;
 
-    public static HomeFragment newInstance() {
+    public static HomeFragment getInstance() {
         return new HomeFragment();
     }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        verifyStoragePermissions(this);
         View view = inflater.inflate(R.layout.activity_recycler_view, container, false);
         RecyclerView tripList_rv = view.findViewById(R.id.rv_trip_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
-
+        verifyStoragePermissions(this);
         tripList_rv.setLayoutManager(linearLayoutManager);
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), linearLayoutManager.getOrientation());
         tripList_rv.addItemDecoration(divider);
 
-        //extract trip list from room database
-        Context context = getActivity();
-        AsyncTask.execute(() -> {
-            TripDatabase dataBase = TripDatabase.getDatabase(context.getApplicationContext());
-            trips = new ArrayList<Trip>(dataBase.tripDAO().getAll());
-        });
-
         RecyclerViewActivity.ItemAdapter itemAdapter = new RecyclerViewActivity.ItemAdapter(trips);
         tripList_rv.setAdapter(itemAdapter);
+
+        tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
+        // Update the cached copy of the words in the adapter.
+        tripViewModel.getAllTrips().observe(getViewLifecycleOwner(), itemAdapter::setTrips);
         return view;
     }
 
@@ -96,6 +80,19 @@ public class HomeFragment extends Fragment {
             );
         }
     }
+/*
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == NEW_TRIP_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            Trip trip = new Trip();
+            tripViewModel.insert(trip);
+        } else {
+            Toast.makeText(
+                    getActivity(),
+                    "not saved",
+                    Toast.LENGTH_LONG).show();
+        }
+    }*/
 
 }
