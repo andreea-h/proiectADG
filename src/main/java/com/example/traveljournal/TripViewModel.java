@@ -37,4 +37,5 @@ public class TripViewModel extends AndroidViewModel {
         tripRepository.updateTrip(trip);
     }
 
+
 }

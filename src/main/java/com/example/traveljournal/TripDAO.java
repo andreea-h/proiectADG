@@ -29,4 +29,6 @@ public interface TripDAO {
 
     @Update
     void updateTrip(Trip trip);
+
+
 }

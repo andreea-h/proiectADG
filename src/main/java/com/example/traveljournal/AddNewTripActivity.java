@@ -2,6 +2,7 @@ package com.example.traveljournal;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -23,6 +24,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.traveljournal.myFragments.HomeFragment;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -34,12 +36,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventListener;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class AddNewTripActivity extends AppCompatActivity implements EventListener {
     public static final int SELECTPHOTO_REQUEST_CODE = 100;
-    public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
 
-    final Trip newTripItem = new Trip();
+    Trip newTripItem;
 
     private TextInputLayout tripNameTextInputLayout;
     private TextInputLayout tripDestinationTextInputLayout;
@@ -56,10 +58,27 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
     private RadioGroup tripTypeOptions;
     private RadioButton tripType;
 
+    private RadioButton city_break_button;
+    private RadioButton sea_side_button;
+    private RadioButton mountains_button;
+
     private EditText tripNameEditText;
     private EditText tripDestinationEditText;
     private Button submitButton;
 
+    //getExtra data (for edit trip action case)
+    String tripId;
+    String tripName;
+    String tripDestination;
+    String tripTypeAsString;
+    float tripPrice;
+    String startData;
+    String endData;
+    float tripRating;
+    String photoPathString;
+    boolean isFavourite;
+
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,14 +86,95 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
 
         initInputs();
 
-        priceSlider.setMax(1000);
+        //for edit action, check data received from HomeFragment
+        tripId = getIntent().getStringExtra(HomeFragment.TRIP_ID);
+        if (tripId != null) {
+            tripName = getIntent().getStringExtra(HomeFragment.TRIP_NAME);
+            tripDestination = getIntent().getStringExtra(HomeFragment.TRIP_DESTINATION);
+            tripTypeAsString = getIntent().getStringExtra(HomeFragment.TRIP_TYPE);
+            tripPrice = getIntent().getExtras().getFloat(HomeFragment.TRIP_PRICE);
+            startData = getIntent().getStringExtra(HomeFragment.TRIP_START_DATE);
+            endData = getIntent().getStringExtra(HomeFragment.TRIP_END_DATE);
+            tripRating = getIntent().getExtras().getFloat(HomeFragment.TRIP_RATING);
+            photoPathString = getIntent().getStringExtra(HomeFragment.TRIP_PHOTO_PATH);
+            isFavourite = getIntent().getExtras().getBoolean(HomeFragment.TRIP_IS_FAV);
+        }
+
+
+        if (tripId != null) {
+            //EDIT ACTION
+            //init fields with data about specific trip extracted from database
+            tripNameEditText.setText(tripName, TextView.BufferType.EDITABLE);
+            tripDestinationEditText.setText(tripDestination, TextView.BufferType.EDITABLE);
+
+            //String name, String destination, String type, float price, TripDate startDate, TripDate endDate, float rating, String imagePath, boolean isFavourite
+            switch (tripTypeAsString) {
+                case "City Break":
+                    city_break_button.setChecked(true);
+                    break;
+                case "Sea side":
+                    sea_side_button.setChecked(true);
+                    break;
+                case "Mountains":
+                    mountains_button.setChecked(true);
+                    break;
+            }
+
+            priceSlider.setProgress((int)tripPrice);
+            ratingBar.setRating(tripRating);
+            photoPath = photoPathString;
+            imagePathTextView.setText(photoPathString);
+            priceTextView.setText(" " + tripPrice + "euro");
+
+            StringTokenizer startDateSt = new StringTokenizer(startData, "/");
+            int i = 0;
+            int day = 0, month = 0, year = 0;
+            while (startDateSt.hasMoreTokens()) {
+                if (i == 0) {
+                    day = Integer.parseInt(startDateSt.nextToken());
+                }
+                if (i == 1) {
+                    month = Integer.parseInt(startDateSt.nextToken());
+                }
+                if (i == 2) {
+                    year = Integer.parseInt(startDateSt.nextToken());
+                }
+                i++;
+            }
+            startDatePicker.updateDate(year, month, day);
+            TripDate startDate = new TripDate(day, month, year);
+
+            i = 0;
+            StringTokenizer endDateSt = new StringTokenizer(endData, "/");
+            while (endDateSt.hasMoreTokens()) {
+                if (i == 0) {
+                    day = Integer.parseInt(endDateSt.nextToken());
+                }
+                if (i == 1) {
+                    month = Integer.parseInt(endDateSt.nextToken());
+                }
+                if (i == 2) {
+                    year = Integer.parseInt(endDateSt.nextToken());
+                }
+                i++;
+            }
+            endDatePicker.updateDate(year, month, day);
+            TripDate endDate = new TripDate(day, month, year);
+            newTripItem = new Trip(tripName, tripDestination, tripTypeAsString, tripPrice, startDate, endDate, tripRating, photoPathString, isFavourite);
+            newTripItem.setTripID(tripId);
+        }
+        else {
+            //ADD TRIP ACTION
+            newTripItem = new Trip();
+        }
+
+        priceSlider.setMax(1500);
         priceSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                System.out.println("Valorea este: " + priceSlider.getProgress());
-                priceTextView.setText("Price: " + priceSlider.getProgress() * 10 + " EUR");
-                newTripItem.setPrice(priceSlider.getProgress() * 10);
+                priceTextView.setText("     " + priceSlider.getProgress() + " euro");
+                newTripItem.setPrice(priceSlider.getProgress());
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -96,21 +196,31 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
         //updateDB
         Context context = getApplicationContext();
         //access localDatabase
-        TripRepository.insertAsyncTask.execute(() -> {
-            TripDatabase dataBase = TripDatabase.getDatabase(context);
-            //add new trip info in local database
-            dataBase.tripDAO().insert(newTripItem);
-            List<Trip> db = dataBase.tripDAO().getAll().getValue();
-        });
+        if (tripId == null) {
+            //ADD TRIP ACTION
+            TripRepository.insertAsyncTask.execute(() -> {
+                TripDatabase dataBase = TripDatabase.getDatabase(context);
+                //add new trip info in local database
+                dataBase.tripDAO().insert(newTripItem);
+            });
 
-        Toast.makeText(this, "Trip successfully added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Trip successfully added", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            //EDIT TRIP ACTION
+            TripRepository.insertAsyncTask.execute(() -> {
+                TripDatabase dataBase = TripDatabase.getDatabase(context);
+                //add new trip info in local database
+                dataBase.tripDAO().updateTrip(newTripItem);
+            });
+            Toast.makeText(this, "Trip successfully updated", Toast.LENGTH_SHORT).show();
+        }
 
         //back to main screen
         Intent mainIntent = new Intent(AddNewTripActivity.this, MainScreenActivity.class);
         AddNewTripActivity.this.startActivity(mainIntent);
         AddNewTripActivity.this.finish();
     }
-
 
     //get photo trip
     public void btnSelectPhotoOnClick(View view) {
@@ -145,7 +255,6 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
             }
         }
     }
-
 
     private void getInputs() {
         //set trip name and destination
@@ -199,6 +308,10 @@ public class AddNewTripActivity extends AppCompatActivity implements EventListen
         tripTypeOptions = findViewById(R.id.trip_type);
         submitButton = findViewById(R.id.submit_button);
         imagePathTextView = findViewById(R.id.image_path_textView);
+
+        city_break_button = findViewById(R.id.city_break);
+        sea_side_button = findViewById(R.id.sea_side);
+        mountains_button = findViewById(R.id.mountains);
     }
 
     //return false if not all fields are completed

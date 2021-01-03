@@ -13,13 +13,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,14 +35,22 @@ import java.io.File;
 import java.util.List;
 
 public class RecyclerViewActivity extends AppCompatActivity { //trip list
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_recycler_view);
     }
 
+    public static interface ClickListener{
+        public void onClick(View view,int position);
+        public void onLongClick(View view,int position);
+    }
+
     private static class ItemViewHolder extends RecyclerView.ViewHolder {
+        private ClickListener clicklistener;
+        private GestureDetector gestureDetector;
+
         private final TextView name;
         private final TextView destination;
         private final TextView price;
@@ -61,7 +72,7 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
         void bind(@NonNull final Trip item) {
             name.setText(item.getName());
             destination.setText(" " + item.getDestination());
-            price.setText(" " + item.getPrice() +"euro");
+            price.setText(" " + item.getPrice() +" euro");
             rating.setText(item.getRating() + "/5.0");
             File imageFile = new File(item.getImagePath());
             if(imageFile.exists()) {
@@ -75,12 +86,7 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
             else {
                 bookmark.setBackgroundResource(R.drawable.ic_baseline_bookmark_border_24);
             }
-            bookmark.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    HomeFragment.bookmarkPressed(item, bookmark);
-                }
-            });
+            bookmark.setOnClickListener(view -> HomeFragment.bookmarkPressed(item, bookmark));
         }
     }
 

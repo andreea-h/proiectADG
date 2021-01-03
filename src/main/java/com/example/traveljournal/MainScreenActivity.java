@@ -65,6 +65,7 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println("DESCHIDERE ACTIVITATE ADAUGARE");
                 Intent mainIntent = new Intent(MainScreenActivity.this, AddNewTripActivity.class);
                 MainScreenActivity.this.startActivity(mainIntent);
             }
