@@ -8,7 +8,13 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
+    tools:context=".MainScreenActivity"
     android:background="@drawable/add_trip_screen">
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <include
         layout="@layout/app_bar_main"

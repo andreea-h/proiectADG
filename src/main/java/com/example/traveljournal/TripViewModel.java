@@ -32,4 +32,9 @@ public class TripViewModel extends AndroidViewModel {
     public void insert(Trip trip) {
         tripRepository.insert(trip);
     }
+
+    public void updateTrip(Trip trip) {
+        tripRepository.updateTrip(trip);
+    }
+
 }

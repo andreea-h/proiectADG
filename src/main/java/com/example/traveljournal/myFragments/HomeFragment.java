@@ -26,6 +26,7 @@ import com.example.traveljournal.R;
 import com.example.traveljournal.RecyclerViewActivity;
 import com.example.traveljournal.Trip;
 import com.example.traveljournal.TripDatabase;
+import com.example.traveljournal.TripRepository;
 import com.example.traveljournal.TripViewModel;
 
 import java.util.ArrayList;
@@ -37,6 +38,9 @@ public class HomeFragment extends Fragment {
 
     public static final int NEW_TRIP_ACTIVITY_REQUEST_CODE = 1;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
+
+    // Declare Context variable at class level in Fragment
+    private static Context mContext;
 
     private static final String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -81,5 +85,36 @@ public class HomeFragment extends Fragment {
             );
         }
     }
+
+
+    // Initialise it from onAttach()
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    public static void bookmarkPressed(Trip trip, ImageView iconView) {
+        if (trip.getFavourite()) {
+            iconView.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+            trip.setFavourite(false);
+            //update info in database
+            TripRepository.insertAsyncTask.execute(() -> {
+                TripDatabase dataBase = TripDatabase.getDatabase(mContext);
+                dataBase.tripDAO().updateTrip(trip);
+            });
+            Toast.makeText(mContext, "Trip removed for favourites", Toast.LENGTH_SHORT).show();
+        } else {
+            trip.setFavourite(true);
+            iconView.setImageResource(R.drawable.ic_baseline_bookmark_24);
+            //update info in database
+            TripRepository.insertAsyncTask.execute(() -> {
+                TripDatabase dataBase = TripDatabase.getDatabase(mContext);
+                dataBase.tripDAO().updateTrip(trip);
+            });
+            Toast.makeText(mContext, "Trip marked as favourite", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }

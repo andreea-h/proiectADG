@@ -7,13 +7,18 @@ import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Entity(tableName = "trips_table") //Trip class represents a SQLite table
 public class Trip {
     @NonNull
     @PrimaryKey
+    private String tripID;
+    @ColumnInfo(name = "name")
     private String name;
     @ColumnInfo(name = "destination")
     private String destination;
@@ -33,12 +38,12 @@ public class Trip {
     private boolean isFavourite;
 
 
-
     public Trip() {
         this("", "", "", 0, new TripDate(0,0,0), new TripDate(0,0,0), 0, "", false);
     }
 
-    public Trip(@NotNull String name, String destination, String type, float price, TripDate startDate, TripDate endDate, float rating, String imagePath, boolean isFavourite) {
+    public Trip(String name, String destination, String type, float price, TripDate startDate, TripDate endDate, float rating, String imagePath, boolean isFavourite) {
+        this.tripID = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         this.name = name;
         this.destination = destination;
         this.type = type;
@@ -48,6 +53,14 @@ public class Trip {
         this.rating = rating;
         this.isFavourite = isFavourite;
         this.imagePath = imagePath;
+    }
+
+    public String getTripID() {
+        return tripID;
+    }
+
+    public void setTripID(String tripID) {
+        this.tripID = tripID;
     }
 
     public void setFavourite(boolean favourite) {

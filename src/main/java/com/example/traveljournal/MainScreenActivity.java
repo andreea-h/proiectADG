@@ -49,6 +49,17 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //set default home fragment
+        navigationView.setCheckedItem(R.id.nav_home);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.nav_host_fragment, new HomeFragment());
+        transaction.commit();
+        String title = "Trip List";
+        //set toolbar title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+
         FloatingActionButton fab = findViewById(R.id.fab);
         //add trip action
         fab.setOnClickListener(new View.OnClickListener() {
@@ -66,9 +77,10 @@ public class MainScreenActivity extends AppCompatActivity implements NavigationV
         return true;
     }
 
+
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.mobile_navigation);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }

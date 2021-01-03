@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -14,10 +15,7 @@ public interface TripDAO {
     @Query("SELECT * from trips_table")
     LiveData<List<Trip>> getAll();
 
-    @Query("SELECT * FROM trips_table WHERE name IN (:userIds)")
-    List<Trip> loadAllByIds(int[] userIds);
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE) //daca se inceraca adaugarea unui trip cu acelasi nume, acesta va fi ignorat
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Trip trip);
 
     @Delete
@@ -28,4 +26,7 @@ public interface TripDAO {
 
     @Query("SELECT * FROM trips_table WHERE isFavourite IN (1)")
     LiveData<List<Trip>> getFavouritesTrips();
+
+    @Update
+    void updateTrip(Trip trip);
 }

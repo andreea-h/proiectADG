@@ -35,6 +35,12 @@ public class TripRepository {
         });
     }
 
+    void updateTrip(Trip trip) {
+        TripDatabase.databaseWriteExecutor.execute(() -> {
+            tripDao.updateTrip(trip);
+        });
+    }
+
     public static class insertAsyncTask extends AsyncTask<Trip, Void, Void> {
 
         private TripDAO mAsyncTaskDao;
