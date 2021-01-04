@@ -48,8 +48,6 @@ public class RecyclerViewActivity extends AppCompatActivity { //trip list
     }
 
     private static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private ClickListener clicklistener;
-        private GestureDetector gestureDetector;
 
         private final TextView name;
         private final TextView destination;

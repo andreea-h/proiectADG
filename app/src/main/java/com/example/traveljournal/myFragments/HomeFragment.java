@@ -30,6 +30,8 @@ import com.example.traveljournal.R;
 import com.example.traveljournal.RecyclerViewActivity;
 import com.example.traveljournal.Trip;
 import com.example.traveljournal.TripDatabase;
+import com.example.traveljournal.TripInfoActivity;
+import com.example.traveljournal.TripInfoActivity;
 import com.example.traveljournal.TripRepository;
 import com.example.traveljournal.TripViewModel;
 
@@ -92,7 +94,23 @@ public class HomeFragment extends Fragment {
                 new RecyclerItemClickListener(mContext, tripList_rv ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
                         //open a new screen with details of the trip in read only mode
+                        Trip selectedTrip = tripViewModel.getAllTrips().getValue().get(position);
 
+                        Intent intent = new Intent(view.getContext(), TripInfoActivity.class);
+                        intent.putExtra(TRIP_ID, selectedTrip.getTripID());
+                        intent.putExtra(TRIP_NAME, selectedTrip.getName());
+                        intent.putExtra(TRIP_DESTINATION, selectedTrip.getDestination());
+                        intent.putExtra(TRIP_TYPE, selectedTrip.getType());
+                        intent.putExtra(TRIP_PRICE, selectedTrip.getPrice());
+                        intent.putExtra(TRIP_START_DATE, selectedTrip.getStartDate().getDay() + "/"
+                                + selectedTrip.getStartDate().getMonth() + "/" + selectedTrip.getStartDate().getYear());
+                        intent.putExtra(TRIP_END_DATE, selectedTrip.getEndDate().getDay() + "/"
+                                + selectedTrip.getEndDate().getMonth() + "/" + selectedTrip.getEndDate().getYear());
+                        intent.putExtra(TRIP_RATING, selectedTrip.getRating());
+                        intent.putExtra(TRIP_PHOTO_PATH, selectedTrip.getImagePath());
+                        intent.putExtra(TRIP_IS_FAV, selectedTrip.getFavourite());
+
+                        view.getContext().startActivity(intent);
                     }
 
                     @Override public void onLongItemClick(View view, int position) {

@@ -30,7 +30,6 @@
     <string name="select_image">SELECT IMAGE</string>
 
 
-
     <string name="name_cannot_be_empty">You must complete trip name</string>
     <string name="destination_cannot_be_empty">You must complete trip destination</string>
 
