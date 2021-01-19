@@ -2,18 +2,27 @@ package com.example.traveljournal;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.traveljournal.myFragments.HomeFragment;
 
+import org.json.JSONObject;
+
 import java.io.File;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.StringTokenizer;
+
+import static android.app.PendingIntent.getActivity;
 
 public class TripInfoActivity extends AppCompatActivity {
 
@@ -48,6 +57,13 @@ public class TripInfoActivity extends AppCompatActivity {
     public TextView endDate;
     public RatingBar rating;
     public TextView type;
+
+    public TextView cityField;
+    public TextView updatedField;
+    public TextView detailsField;
+    public TextView currentTemperatureField;
+    public TextView weatherIcon;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,5 +115,70 @@ public class TripInfoActivity extends AppCompatActivity {
         startDate = findViewById(R.id.trip_start_date);
         endDate = findViewById(R.id.trip_end_date);
         price = findViewById(R.id.trip_price);
+
+        //cityField = (TextView)findViewById(R.id.city_field);
+        //updatedField = (TextView)findViewById(R.id.updated_field);
+        detailsField = (TextView)findViewById(R.id.details);
+        currentTemperatureField = (TextView)findViewById(R.id.current_temperature);
+        weatherIcon = (TextView)findViewById(R.id.weather_icon);
     }
+
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+    private void renderWeather(JSONObject json){
+        try {
+         //   cityField.setText(json.getString("name").toUpperCase(Locale.US) + ", " +
+         //           json.getJSONObject("sys").getString("country"));
+
+            JSONObject details = json.getJSONArray("weather").getJSONObject(0);
+            JSONObject main = json.getJSONObject("main");
+            detailsField.setText(
+                    details.getString("description").toUpperCase(Locale.US) +
+                            "\n" + "Humidity: " + main.getString("humidity") + "%" +
+                            "\n" + "Pressure: " + main.getString("pressure") + " hPa");
+
+            currentTemperatureField.setText(
+                    String.format("%.2f", main.getDouble("temp"))+ " ℃");
+
+          //  DateFormat df = DateFormat.getDateTimeInstance();
+         //   String updatedOn = df.format(new Date(json.getLong("dt")*1000));
+         //   updatedField.setText("Last update: " + updatedOn);
+
+            setWeatherIcon(details.getInt("id"),
+                    json.getJSONObject("sys").getLong("sunrise") * 1000,
+                    json.getJSONObject("sys").getLong("sunset") * 1000);
+
+        }catch(Exception e){
+            Log.e("SimpleWeather", "One or more fields not found in the JSON data");
+        }
+    }
+
+    private void setWeatherIcon(int actualId, long sunrise, long sunset){
+        int id = actualId / 100;
+        String icon = "";
+        if(actualId == 800){
+            long currentTime = new Date().getTime();
+            if(currentTime>=sunrise && currentTime<sunset) {
+                icon = this.getString(R.string.weather_sunny);
+            } else {
+                icon = this.getString(R.string.weather_clear_night);
+            }
+        } else {
+            switch(id) {
+                case 2 : icon = this.getString(R.string.weather_thunder);
+                    break;
+                case 3 : icon = this.getString(R.string.weather_drizzle);
+                    break;
+                case 7 : icon = this.getString(R.string.weather_foggy);
+                    break;
+                case 8 : icon = this.getString(R.string.weather_cloudy);
+                    break;
+                case 6 : icon = this.getString(R.string.weather_snowy);
+                    break;
+                case 5 : icon = this.getString(R.string.weather_rainy);
+                    break;
+            }
+        }
+        weatherIcon.setText(icon);
+    }
+
 }
